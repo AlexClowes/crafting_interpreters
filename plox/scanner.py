@@ -2,6 +2,26 @@ import lox
 from tokens import Token, TokenType
 
 
+keywords = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
+
+
 class Scanner:
     def __init__(self, source):
         self.source = source
@@ -67,8 +87,16 @@ class Scanner:
             self.string()
         elif c.isdigit():
             self.number()
+        elif c.isalpha() or c == "_":
+            self.identifier()
         else:
             lox.error(self.line, "Unexpected character")
+
+    def identifier(self):
+        while self.peek().isalnum() or self.peek() == "_":
+            self.advance()
+        text = self.source[self.start : self.current]
+        self.add_token(keywords.get(text, TokenType.IDENTIFIER))
 
     def string(self):
         while self.peek() != '"' and not self.is_at_end():
