@@ -2,12 +2,20 @@ import os
 import sys
 
 
+TAB = 4 * " "
+
+
 def define_type(file, base_name, class_name, field_list):
     file.write(f"class {class_name}({base_name}):\n")
-    file.write(f"    def __init__(self, {field_list}):\n")
+    # __init__
+    file.write(TAB + f"def __init__(self, {field_list}):\n")
     for field in field_list.split(","):
         name = field.strip()
-        file.write(f"        self.{name} = {name}\n")
+        file.write(2 * TAB + f"self.{name} = {name}\n")
+    file.write("\n")
+    # accept
+    file.write(TAB + "def accept(self, visitor):\n")
+    file.write(2 * TAB + f"return visitor.visit_{class_name.lower()}(self)\n")
     file.write("\n\n")
 
 
@@ -15,7 +23,7 @@ def define_ast(output_dir, base_name, types):
     path = os.path.join(output_dir, base_name.lower() + ".py")
     with open(path, mode="w") as f:
         f.write(f"class {base_name}:\n")
-        f.write("    pass\n\n\n")
+        f.write(TAB + "pass\n\n\n")
 
         # The AST classes
         for type in types:
