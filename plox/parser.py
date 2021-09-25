@@ -105,19 +105,18 @@ class Parser:
 
     def synchronize(self):
         self.advance()
-        while not self.is_at_end():
-            if (
-                self.previous().type is TokenType.SEMICOLON
-                or self.peek().type in (
-                    TokenType.CLASS,
-                    TokenType.FOR,
-                    TokenType.FUN,
-                    TokenType.IF,
-                    TokenType.PRINT,
-                    TokenType.RETURN,
-                    TokenType.VAR,
-                    TokenType.WHILE,
-                )
-            ):
-                return
+        while (
+            not self.is_at_end()
+            and self.previous().type is not TokenType.SEMICOLON
+            and self.peek().type not in (
+                TokenType.CLASS,
+                TokenType.FOR,
+                TokenType.FUN,
+                TokenType.IF,
+                TokenType.PRINT,
+                TokenType.RETURN,
+                TokenType.VAR,
+                TokenType.WHILE,
+            )
+        ):
             self.advance()
