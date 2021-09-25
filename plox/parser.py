@@ -1,5 +1,10 @@
 import expr
+import lox
 from tokens import TokenType
+
+
+class ParseError(RuntimeError):
+    pass
 
 
 class Parser:
@@ -71,6 +76,11 @@ class Parser:
             return True
         return False
 
+    def consume(self, type, message):
+        if self.check(type):
+            return self.advance()
+        raise self.error(self.peek(), message)
+
     def check(self, type):
         return not self.is_at_end() and self.peek().type is type
 
@@ -87,3 +97,27 @@ class Parser:
 
     def previous(self):
         return self.tokens[self.current - 1]
+
+    @staticmethod
+    def error(token, message):
+        lox.parse_error(token, message)
+        return ParseError
+
+    def synchronize(self):
+        self.advance()
+        while not self.is_at_end():
+            if (
+                self.previous().type is TokenType.SEMICOLON
+                or self.peek().type in (
+                    TokenType.CLASS,
+                    TokenType.FOR,
+                    TokenType.FUN,
+                    TokenType.IF,
+                    TokenType.PRINT,
+                    TokenType.RETURN,
+                    TokenType.VAR,
+                    TokenType.WHILE,
+                )
+            ):
+                return
+            self.advance()

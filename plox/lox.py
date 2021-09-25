@@ -1,6 +1,7 @@
 import sys
 
 import scanner
+from tokens import TokenType
 
 
 HAD_ERROR = False
@@ -8,6 +9,13 @@ HAD_ERROR = False
 
 def error(line, message):
     report(line, "", message)
+
+
+def parse_error(token, message):
+    if token.type is TokenType.EOF:
+        report(token.line, " at end", message)
+    else:
+        report(token.line, f"at '{token.lexeme}'", message)
 
 
 def report(line, where, message):
