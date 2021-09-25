@@ -1,5 +1,7 @@
 import sys
 
+from ast_printer import ASTPrinter
+import parser
 import scanner
 from tokens import TokenType
 
@@ -25,8 +27,10 @@ def report(line, where, message):
 
 
 def run(source):
-    for token in scanner.Scanner(source).scan_tokens():
-        print(token)
+    tokens = scanner.Scanner(source).scan_tokens()
+    expression = parser.Parser(tokens).parse()
+    if not HAD_ERROR:
+        print(ASTPrinter().print(expression))
 
 
 def run_file(path):

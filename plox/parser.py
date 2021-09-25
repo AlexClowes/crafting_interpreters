@@ -12,6 +12,12 @@ class Parser:
         self.tokens = tokens
         self.current = 0
 
+    def parse(self):
+        try:
+            return self.expression()
+        except ParseError:
+            return
+
     def expression(self):
         return self.equality()
 
@@ -61,6 +67,7 @@ class Parser:
             expression = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return expr.Grouping(expression)
+        raise self.error(self.peek(), "Expect expression.")
 
     def left_associative_binary_series(self, unit, operator_types):
         expression = unit()
