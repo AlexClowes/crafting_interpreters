@@ -16,7 +16,7 @@ class ASTPrinter:
         return self.parenthesize("group", expr.expression)
 
     def visit_literal(self, expr):
-        return str(expr.value) if expr.value else "nil"
+        return str(expr.value) if expr.value is not None else "nil"
 
     def visit_unary(self, expr):
         return self.parenthesize(expr.operator.lexeme, expr.right)
