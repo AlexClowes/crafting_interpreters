@@ -1,5 +1,6 @@
 import sys
 
+import lox
 from ast_printer import ASTPrinter
 import parser
 import scanner
@@ -22,21 +23,20 @@ def parse_error(token, message):
 
 def report(line, where, message):
     print(f"[line {line}] Error{where}: {message}")
-    global HAD_ERROR
-    HAD_ERROR = True
+    lox.HAD_ERROR = True
 
 
 def run(source):
     tokens = scanner.Scanner(source).scan_tokens()
     expression = parser.Parser(tokens).parse()
-    if not HAD_ERROR:
+    if not lox.HAD_ERROR:
         print(ASTPrinter().print(expression))
 
 
 def run_file(path):
     with open(path) as f:
         run(f.read())
-    if HAD_ERROR:
+    if lox.HAD_ERROR:
         sys.exit(65)
 
 
@@ -47,8 +47,7 @@ def run_prompt():
         except EOFError:
             break
         run(line)
-        global HAD_ERROR
-        HAD_ERROR = False
+        lox.HAD_ERROR = False
 
 
 def main():
