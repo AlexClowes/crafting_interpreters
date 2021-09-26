@@ -1,6 +1,13 @@
 from numbers import Number
 
+import lox
 from tokens import TokenType
+
+
+class RuntimeException(RuntimeError):
+    def __init__(self, token, message):
+        super().__init__(message)
+        self.token = token
 
 
 class Interpreter:
@@ -12,23 +19,33 @@ class Interpreter:
         right = self.evaluate(expr.right)
         op_type = expr.operator.type
         if op_type is TokenType.MINUS:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) - float(right)
         if op_type is TokenType.PLUS:
             if isinstance(left, Number) and isinstance(right, Number):
                 return float(left) + float(right)
             if isinstance(left, str) and isinstance(right, str):
                 return str(left) + str(right)
+            raise RuntimeException(
+                expr.operator, "Operands must be two numbers or two strings."
+            )
         if op_type is TokenType.SLASH:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) / float(right)
         if op_type is TokenType.STAR:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) * float(right)
         if op_type is TokenType.GREATER:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) > float(right)
         if op_type is TokenType.GREATER_EQUAL:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) >= float(right)
         if op_type is TokenType.LESS:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) < float(right)
         if op_type is TokenType.LESS_EQUAL:
+            self.check_number_operands(expr.operator, left, right)
             return float(left) <= float(right)
         if op_type is TokenType.EQUAL:
             return left == right
@@ -46,9 +63,15 @@ class Interpreter:
         right = self.evaluate(expr.right)
         op_type = expr.operator.type
         if op_type is TokenType.MINUS:
+            self.check_number_operands(expr.operator, right)
             return -float(right)
         if op_type is TokenType.BANG:
             return not self.is_truthy(right)
+
+    @staticmethod
+    def check_number_operands(operator, *operands):
+        if any(not isinstance(operand, Number) for operand in operands):
+            raise RuntimeException(operator, "Operand must be a number.")
 
     @staticmethod
     def is_truthy(obj):
