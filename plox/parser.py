@@ -1,6 +1,6 @@
-import expr
-import lox
-from tokens import TokenType
+from . import expr
+from . import lox
+from .tokens import TokenType
 
 
 class ParseError(RuntimeError):

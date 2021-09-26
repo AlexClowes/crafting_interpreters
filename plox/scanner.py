@@ -1,5 +1,5 @@
-import lox
-from tokens import Token, TokenType
+from . import lox
+from .tokens import Token, TokenType
 
 
 keywords = {

@@ -1,7 +1,7 @@
 from numbers import Number
 
-import lox
-from tokens import TokenType
+from . import lox
+from .tokens import TokenType
 
 
 class RuntimeException(RuntimeError):

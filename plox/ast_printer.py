@@ -1,5 +1,5 @@
-import expr
-from tokens import Token, TokenType
+from . import expr
+from .tokens import Token, TokenType
 
 
 class ASTPrinter:
