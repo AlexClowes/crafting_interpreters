@@ -38,6 +38,10 @@ class Interpreter:
             )
         if op_type is TokenType.SLASH:
             self.check_number_operands(expr.operator, left, right)
+            if right == 0:
+                raise RuntimeException(
+                    expr.operator, "Division by zero"
+                )
             return float(left) / float(right)
         if op_type is TokenType.STAR:
             self.check_number_operands(expr.operator, left, right)
