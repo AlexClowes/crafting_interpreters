@@ -11,6 +11,13 @@ class RuntimeException(RuntimeError):
 
 
 class Interpreter:
+    def interpret(self, expression):
+        try:
+            value = self.evaluate(expression)
+            print(self.stringify(value))
+        except RuntimeException as exc:
+            lox.runtime_error(exc)
+
     def evaluate(self, expr):
         return expr.accept(self)
 
@@ -76,3 +83,16 @@ class Interpreter:
     @staticmethod
     def is_truthy(obj):
         return obj not in (None, False)
+
+    @staticmethod
+    def stringify(value):
+        if value is None:
+            return "nil"
+        if isinstance(value, Number):
+            text = str(value)
+            if text.endswith(".0"):
+                text = text[:-2]
+            return text
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        return str(value)
