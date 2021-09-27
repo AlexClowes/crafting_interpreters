@@ -37,9 +37,9 @@ def report(line, where, message):
 
 def run(source):
     tokens = Scanner(source).scan_tokens()
-    expression = Parser(tokens).parse()
+    statements = Parser(tokens).parse()
     if not HAD_ERROR:
-        INTERPRETER.interpret(expression)
+        INTERPRETER.interpret(statements)
 
 
 def run_file(path):

@@ -11,12 +11,22 @@ class RuntimeException(RuntimeError):
 
 
 class Interpreter:
-    def interpret(self, expression):
+    def interpret(self, statements):
         try:
-            value = self.evaluate(expression)
-            print(self.stringify(value))
+            for statement in statements:
+                self.execute(statement)
         except RuntimeException as exc:
             lox.runtime_error(exc)
+
+    def execute(self, stmt):
+        stmt.accept(self)
+
+    def visit_expression(self, stmt):
+        self.evaluate(stmt.expression)
+
+    def visit_print(self, stmt):
+        value = self.evaluate(stmt.expression)
+        print(self.stringify(value))
 
     def evaluate(self, expr):
         return expr.accept(self)

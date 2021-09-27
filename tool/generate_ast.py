@@ -49,6 +49,12 @@ def main():
         ],
     )
 
+    define_ast(
+        output_dir,
+        "Stmt",
+        ["Expression : expression", "Print : expression"],
+    )
+
 
 if __name__ == "__main__":
     main()
