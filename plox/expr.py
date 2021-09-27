@@ -37,3 +37,11 @@ class Unary(Expr):
         return visitor.visit_unary(self)
 
 
+class Variable(Expr):
+    def __init__(self, name):
+        self.name = name
+
+    def accept(self, visitor):
+        return visitor.visit_variable(self)
+
+
