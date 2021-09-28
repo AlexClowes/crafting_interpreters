@@ -1,5 +1,6 @@
 from numbers import Number
 
+from .environment import Environment
 from . import lox
 from .tokens import TokenType
 
@@ -11,6 +12,9 @@ class RuntimeException(RuntimeError):
 
 
 class Interpreter:
+    def __init__(self):
+        self.environment = Environment()
+
     def interpret(self, statements):
         try:
             for statement in statements:
@@ -27,6 +31,12 @@ class Interpreter:
     def visit_print(self, stmt):
         value = self.evaluate(stmt.expression)
         print(self.stringify(value))
+
+    def visit_var(self, stmt):
+        value = None
+        if stmt.initializer is not None:
+            value = self.evaluate(stmt.initializer)
+        self.environment.define(stmt.name.lexeme, value)
 
     def evaluate(self, expr):
         return expr.accept(self)
@@ -88,6 +98,9 @@ class Interpreter:
             return -float(right)
         if op_type is TokenType.BANG:
             return not self.is_truthy(right)
+
+    def visit_variable(self, expr):
+        return self.environment.get(expr.name)
 
     @staticmethod
     def check_number_operands(operator, *operands):
