@@ -49,7 +49,18 @@ class Parser:
         return stmt.Expression(expression)
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self):
+        expression = self.equality()
+        if self.match(TokenType.EQUAL):
+            equals = self.previous()
+            value = self.assignment()
+            if isinstance(expression, expr.Variable):
+                name = expression.name
+                return expr.Assign(name, value)
+            self.error(equals, "Invalid assignment target.")
+        return expression
 
     def equality(self):
         return self.left_associative_binary_series(

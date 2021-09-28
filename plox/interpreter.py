@@ -41,6 +41,11 @@ class Interpreter:
     def evaluate(self, expr):
         return expr.accept(self)
 
+    def visit_assign(self, expr):
+        value = self.evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
+
     def visit_binary(self, expr):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)

@@ -42,6 +42,7 @@ def main():
         output_dir,
         "Expr",
         [
+            "Assign : name, value",
             "Binary : left, operator, right",
             "Grouping : expression",
             "Literal : value",

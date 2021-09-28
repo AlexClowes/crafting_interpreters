@@ -13,3 +13,9 @@ class Environment:
             return self.values[name.lexeme]
         except KeyError:
             raise interpreter.RuntimeException(name, f"Undefined variable {name.lexeme}.")
+
+    def assign(self, name, value):
+        if name.lexeme in self.values:
+            self.values[name.lexeme] = value
+        else:
+            raise interpreter.RuntimeException(name, f"Undefined variable {name.lexeme}.")
