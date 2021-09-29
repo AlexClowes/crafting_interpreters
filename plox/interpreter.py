@@ -25,6 +25,18 @@ class Interpreter:
     def execute(self, stmt):
         stmt.accept(self)
 
+    def execute_block(self, statements, environment):
+        previous = self.environment
+        try:
+            self.environment = environment
+            for statement in statements:
+                self.execute(statement)
+        finally:
+            self.environment = previous
+
+    def visit_block(self, stmt):
+        self.execute_block(stmt.statements, Environment(self.environment))
+
     def visit_expression(self, stmt):
         self.evaluate(stmt.expression)
 
