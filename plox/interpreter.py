@@ -113,6 +113,15 @@ class Interpreter:
     def visit_literal(expr):
         return expr.value
 
+    def visit_logical(self, expr):
+        left = self.evaluate(expr.left)
+        if expr.operator.type is TokenType.OR:
+            if self.is_truthy(left):
+                return left
+        elif not self.is_truthy(left):
+            return left
+        return self.evaluate(expr.right)
+
     def visit_unary(self, expr):
         right = self.evaluate(expr.right)
         op_type = expr.operator.type

@@ -46,6 +46,7 @@ def main():
             "Binary : left, operator, right",
             "Grouping : expression",
             "Literal : value",
+            "Logical : left, operator, right",
             "Unary : operator, right",
             "Variable : name"
         ],

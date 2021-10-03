@@ -71,7 +71,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self):
-        expression = self.equality()
+        expression = self.logical_or()
         if self.match(TokenType.EQUAL):
             equals = self.previous()
             value = self.assignment()
@@ -81,13 +81,24 @@ class Parser:
             self.error(equals, "Invalid assignment target.")
         return expression
 
+    def logical_or(self):
+        return self.left_associative_series(
+            expr.Logical, self.logical_and, (TokenType.OR,)
+        )
+
+    def logical_and(self):
+        return self.left_associative_series(
+            expr.Logical, self.equality, (TokenType.AND,)
+        )
+
     def equality(self):
-        return self.left_associative_binary_series(
-            self.comparison, (TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)
+        return self.left_associative_series(
+            expr.Binary, self.comparison, (TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)
         )
 
     def comparison(self):
-        return self.left_associative_binary_series(
+        return self.left_associative_series(
+            expr.Binary,
             self.term,
             (
                 TokenType.GREATER,
@@ -98,13 +109,13 @@ class Parser:
         )
 
     def term(self):
-        return self.left_associative_binary_series(
-            self.factor, (TokenType.MINUS, TokenType.PLUS)
+        return self.left_associative_series(
+            expr.Binary, self.factor, (TokenType.MINUS, TokenType.PLUS)
         )
 
     def factor(self):
-        return self.left_associative_binary_series(
-            self.unary, (TokenType.SLASH, TokenType.STAR)
+        return self.left_associative_series(
+            expr.Binary, self.unary, (TokenType.SLASH, TokenType.STAR)
         )
 
     def unary(self):
@@ -131,12 +142,12 @@ class Parser:
             return expr.Grouping(expression)
         raise self.error(self.peek(), "Expect expression.")
 
-    def left_associative_binary_series(self, unit, operator_types):
+    def left_associative_series(self, parent, unit, operator_types):
         expression = unit()
         while self.match(*operator_types):
             operator = self.previous()
             right = unit()
-            expression = expr.Binary(expression, operator, right)
+            expression = parent(expression, operator, right)
         return expression
 
     def match(self, *types):
