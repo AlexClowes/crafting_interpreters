@@ -56,6 +56,10 @@ class Interpreter:
             value = self.evaluate(stmt.initializer)
         self.environment.define(stmt.name.lexeme, value)
 
+    def visit_while(self, stmt):
+        while self.is_truthy(self.evaluate(stmt.condition)):
+            self.execute(stmt.body)
+
     def evaluate(self, expr):
         return expr.accept(self)
 

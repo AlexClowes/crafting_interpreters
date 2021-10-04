@@ -45,3 +45,12 @@ class Var(Stmt):
         return visitor.visit_var(self)
 
 
+class While(Stmt):
+    def __init__(self, condition, body):
+        self.condition = condition
+        self.body = body
+
+    def accept(self, visitor):
+        return visitor.visit_while(self)
+
+
