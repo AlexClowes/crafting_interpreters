@@ -1,6 +1,6 @@
 from numbers import Number
 
-from .callable import Callable
+from .callable import Callable, Clock
 from .environment import Environment
 from . import lox
 from .tokens import TokenType
@@ -14,7 +14,8 @@ class RuntimeException(RuntimeError):
 
 class Interpreter:
     def __init__(self):
-        self.environment = Environment()
+        self.environment = self.globals = Environment()
+        self.globals.define("clock", Clock())
 
     def interpret(self, statements):
         try:
