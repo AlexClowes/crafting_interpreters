@@ -1,5 +1,6 @@
 from numbers import Number
 
+from .callable import Callable
 from .environment import Environment
 from . import lox
 from .tokens import TokenType
@@ -109,6 +110,18 @@ class Interpreter:
             return left == right
         if op_type is TokenType.BANG_EQUAL:
             return left != right
+
+    def visit_call(self, expr):
+        callee = self.evaluate(expr.callee)
+        arguments = [self.evaluate(argument) for argument in expr.arguments]
+        if not isinstance(callee, Callable):
+            raise RuntimeException(expr.paren, "Can only call functions and classes.")
+        if len(arguments) != callee.arity():
+            raise RuntimeException(
+                expr.paren,
+                f"Expected {callee.arity()} arguments but got {len(arguments)}.",
+            )
+        return callee.call(self, arguments)
 
     def visit_grouping(self, expr):
         return self.evaluate(expr.expression)
