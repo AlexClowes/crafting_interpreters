@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import time
 
+from .environment import Environment
+
 
 class Callable(ABC):
     @abstractmethod
@@ -10,6 +12,23 @@ class Callable(ABC):
     @abstractmethod
     def call(self, interpreter, arguments):
         pass
+
+
+class Function(Callable):
+    def __init__(self, declaration):
+        self.declaration = declaration
+
+    def arity(self):
+        return len(self.declaration.params)
+
+    def call(self, interpreter, arguments):
+        environment = Environment(interpreter.globals)
+        for param, arg in zip(self.declaration.params, arguments):
+            environment.define(param.lexeme, arg)
+        interpreter.execute_block(self.declaration.body, environment)
+
+    def __str__(self):
+        return f"<fn {self.declaration.name.lexeme}>"
 
 
 class Clock(Callable):

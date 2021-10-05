@@ -1,6 +1,6 @@
 from numbers import Number
 
-from .callable import Callable, Clock
+from .callable import Callable, Clock, Function
 from .environment import Environment
 from . import lox
 from .tokens import TokenType
@@ -41,6 +41,10 @@ class Interpreter:
 
     def visit_expression(self, stmt):
         self.evaluate(stmt.expression)
+
+    def visit_function(self, stmt):
+        function = Function(stmt)
+        self.environment.define(stmt.name.lexeme, function)
 
     def visit_if(self, stmt):
         if self.is_truthy(self.evaluate(stmt.condition)):
