@@ -59,6 +59,7 @@ def main():
         [
             "Block : statements",
             "Expression : expression",
+            "Function: name, params, body",
             "If : condition, then_branch, else_branch",
             "Print : expression",
             "Var : name, initializer",

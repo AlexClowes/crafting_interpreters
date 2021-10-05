@@ -18,6 +18,16 @@ class Expression(Stmt):
         return visitor.visit_expression(self)
 
 
+class Function(Stmt):
+    def __init__(self, name, params, body):
+        self.name = name
+        self.params = params
+        self.body = body
+
+    def accept(self, visitor):
+        return visitor.visit_function(self)
+
+
 class If(Stmt):
     def __init__(self, condition, then_branch, else_branch):
         self.condition = condition
