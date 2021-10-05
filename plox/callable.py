@@ -4,6 +4,12 @@ import time
 from .environment import Environment
 
 
+class Return(Exception):
+    def __init__(self, value):
+        super().__init__()
+        self.value = value
+
+
 class Callable(ABC):
     @abstractmethod
     def arity(self):
@@ -25,7 +31,10 @@ class Function(Callable):
         environment = Environment(interpreter.globals)
         for param, arg in zip(self.declaration.params, arguments):
             environment.define(param.lexeme, arg)
-        interpreter.execute_block(self.declaration.body, environment)
+        try:
+            interpreter.execute_block(self.declaration.body, environment)
+        except Return as ret:
+            return ret.value
 
     def __str__(self):
         return f"<fn {self.declaration.name.lexeme}>"

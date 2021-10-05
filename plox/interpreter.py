@@ -1,6 +1,6 @@
 from numbers import Number
 
-from .callable import Callable, Clock, Function
+from .callable import Callable, Clock, Function, Return
 from .environment import Environment
 from . import lox
 from .tokens import TokenType
@@ -55,6 +55,12 @@ class Interpreter:
     def visit_print(self, stmt):
         value = self.evaluate(stmt.expression)
         print(self.stringify(value))
+
+    def visit_return(self, stmt):
+        value = None
+        if stmt.value is not None:
+            value = self.evaluate(stmt.value)
+        raise Return(value)
 
     def visit_var(self, stmt):
         value = None

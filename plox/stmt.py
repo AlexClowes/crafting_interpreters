@@ -46,6 +46,15 @@ class Print(Stmt):
         return visitor.visit_print(self)
 
 
+class Return(Stmt):
+    def __init__(self, keyword, value):
+        self.keyword = keyword
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_return(self)
+
+
 class Var(Stmt):
     def __init__(self, name, initializer):
         self.name = name
