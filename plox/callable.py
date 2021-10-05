@@ -21,14 +21,15 @@ class Callable(ABC):
 
 
 class Function(Callable):
-    def __init__(self, declaration):
+    def __init__(self, declaration, closure):
         self.declaration = declaration
+        self.closure = closure
 
     def arity(self):
         return len(self.declaration.params)
 
     def call(self, interpreter, arguments):
-        environment = Environment(interpreter.globals)
+        environment = Environment(self.closure)
         for param, arg in zip(self.declaration.params, arguments):
             environment.define(param.lexeme, arg)
         try:

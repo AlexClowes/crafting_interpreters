@@ -43,7 +43,7 @@ class Interpreter:
         self.evaluate(stmt.expression)
 
     def visit_function(self, stmt):
-        function = Function(stmt)
+        function = Function(stmt, self.environment)
         self.environment.define(stmt.name.lexeme, function)
 
     def visit_if(self, stmt):
