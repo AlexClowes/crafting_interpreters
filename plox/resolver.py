@@ -1,21 +1,32 @@
+from enum import Enum
+
 from . import lox
+
+
+FunctionType = Enum("FunctionType", ["NONE", "FUNCTION"])
 
 
 class Resolver:
     def __init__(self, interpreter):
         self.interpreter = interpreter
         self.scopes = []
+        self.current_function = FunctionType.NONE
 
     def resolve(self, *args):
         for arg in args:
             arg.accept(self)
 
-    def resolve_function(self, function):
+    def resolve_function(self, function, type):
+        enclosing_function = self.current_function
+        self.current_function = type
+
         self.begin_scope()
         for param in function.params:
             self.define(param)
         self.resolve(*function.body)
         self.end_scope()
+
+        self.current_function = enclosing_function
 
     def begin_scope(self):
         self.scopes.append({})
@@ -25,7 +36,10 @@ class Resolver:
 
     def declare(self, name):
         if self.scopes:
-            self.scopes[-1][name.lexeme] = False
+            scope = self.scopes[-1]
+            if name.lexeme in scope:
+                lox.error(name, "Already a variable with this name in this scope.")
+            scope[name.lexeme] = False
 
     def define(self, name):
         if self.scopes:
@@ -47,7 +61,7 @@ class Resolver:
 
     def visit_function(self, stmt):
         self.define(stmt.name)
-        self.resolve_function(stmt)
+        self.resolve_function(stmt, FunctionType.FUNCTION)
 
     def visit_if(self, stmt):
         self.resolve(stmt.condition, stmt.then_branch)
@@ -58,6 +72,8 @@ class Resolver:
         self.resolve(stmt.expression)
 
     def visit_return(self, stmt):
+        if self.current_function is FunctionType.NONE:
+            lox.error(stmt.keyword, "Can't return from top-level code.")
         if stmt.value is not None:
             self.resolve(stmt.value)
 

@@ -10,8 +10,6 @@ from .tokens import TokenType
 HAD_ERROR = False
 HAD_RUNTIME_ERROR = False
 
-INTERPRETER = Interpreter()
-
 
 def error(line, message):
     report(line, "", message)
@@ -39,9 +37,12 @@ def report(line, where, message):
 def run(source):
     tokens = Scanner(source).scan_tokens()
     statements = Parser(tokens).parse()
+
+    interpreter = Interpreter()
     if not HAD_ERROR:
-        Resolver(INTERPRETER).resolve(*statements)
-        INTERPRETER.interpret(statements)
+        Resolver(interpreter).resolve(*statements)
+    if not HAD_ERROR:
+        interpreter.interpret(statements)
 
 
 def run_file(path):
