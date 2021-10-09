@@ -16,6 +16,7 @@ class Interpreter:
     def __init__(self):
         self.environment = self.globals = Environment()
         self.globals.define("clock", Clock())
+        self.locals = {}
 
     def interpret(self, statements):
         try:
@@ -26,6 +27,9 @@ class Interpreter:
 
     def execute(self, stmt):
         stmt.accept(self)
+
+    def resolve(self, expr, depth):
+        self.locals[expr] = depth
 
     def execute_block(self, statements, environment):
         previous = self.environment
@@ -77,7 +81,11 @@ class Interpreter:
 
     def visit_assign(self, expr):
         value = self.evaluate(expr.value)
-        self.environment.assign(expr.name, value)
+        if expr in self.locals:
+            distance = self.locals[expr]
+            self.environment.assign_at(distance, expr.name, value)
+        else:
+            self.globals.assign(expr.name, value)
         return value
 
     def visit_binary(self, expr):
@@ -160,7 +168,13 @@ class Interpreter:
             return not self.is_truthy(right)
 
     def visit_variable(self, expr):
-        return self.environment.get(expr.name)
+        return self.look_up_variable(expr.name, expr)
+
+    def look_up_variable(self, name, expr):
+        if expr in self.locals:
+            distance = self.locals[expr]
+            return self.environment.get_at(distance, name.lexeme)
+        return self.globals.get(name)
 
     @staticmethod
     def check_number_operands(operator, *operands):

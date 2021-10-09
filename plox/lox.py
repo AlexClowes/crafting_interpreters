@@ -2,6 +2,7 @@ import sys
 
 from .interpreter import Interpreter
 from .parser import Parser
+from .resolver import Resolver
 from .scanner import Scanner
 from .tokens import TokenType
 
@@ -39,6 +40,7 @@ def run(source):
     tokens = Scanner(source).scan_tokens()
     statements = Parser(tokens).parse()
     if not HAD_ERROR:
+        Resolver(INTERPRETER).resolve(*statements)
         INTERPRETER.interpret(statements)
 
 
