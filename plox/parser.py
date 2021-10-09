@@ -22,14 +22,14 @@ class Parser:
     def declaration(self):
         try:
             if self.match(TokenType.FUN):
-                return self.function("function")
+                return self.function_declaration("function")
             if self.match(TokenType.VAR):
                 return self.var_declaration()
             return self.statement()
         except ParseError:
             self.synchronize()
 
-    def function(self, kind):
+    def function_declaration(self, kind):
         name = self.consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
         self.consume(TokenType.LEFT_PAREN, f"Expect '(' after {kind} name.")
         parameters = []
