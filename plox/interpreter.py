@@ -1,8 +1,9 @@
 from numbers import Number
 
+from . import lox
 from .callable import Callable, Clock, Function, Return
 from .environment import Environment
-from . import lox
+from .lox_class import LoxClass
 from .tokens import TokenType
 
 
@@ -42,6 +43,10 @@ class Interpreter:
 
     def visit_block(self, stmt):
         self.execute_block(stmt.statements, Environment(self.environment))
+
+    def visit_class(self, stmt):
+        self.environment.define(stmt.name.lexeme, None)
+        self.environment.assign(stmt.name, LoxClass(stmt.name.lexeme))
 
     def visit_expression(self, stmt):
         self.evaluate(stmt.expression)

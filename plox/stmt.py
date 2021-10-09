@@ -10,6 +10,15 @@ class Block(Stmt):
         return visitor.visit_block(self)
 
 
+class Class(Stmt):
+    def __init__(self, name, methods):
+        self.name = name
+        self.methods = methods
+
+    def accept(self, visitor):
+        return visitor.visit_class(self)
+
+
 class Expression(Stmt):
     def __init__(self, expression):
         self.expression = expression

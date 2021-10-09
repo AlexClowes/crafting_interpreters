@@ -56,6 +56,10 @@ class Resolver:
         self.resolve(*stmt.statements)
         self.end_scope()
 
+    def visit_class(self, stmt):
+        self.declare(stmt.name)
+        self.define(stmt.name)
+
     def visit_expression(self, stmt):
         self.resolve(stmt.expression)
 
