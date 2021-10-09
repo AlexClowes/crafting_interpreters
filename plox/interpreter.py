@@ -3,7 +3,7 @@ from numbers import Number
 from . import lox
 from .callable import Callable, Clock, Function, Return
 from .environment import Environment
-from .lox_class import LoxClass
+from .lox_class import Instance, LoxClass
 from .tokens import TokenType
 
 
@@ -147,6 +147,12 @@ class Interpreter:
             )
         return callee.call(self, arguments)
 
+    def visit_get(self, expr):
+        obj = self.evaluate(expr.object)
+        if isinstance(obj, Instance):
+            return obj.get(expr.name)
+        raise RuntimeException(expr.name, "Only instances have properties.")
+
     def visit_grouping(self, expr):
         return self.evaluate(expr.expression)
 
@@ -162,6 +168,14 @@ class Interpreter:
         elif not self.is_truthy(left):
             return left
         return self.evaluate(expr.right)
+
+    def visit_set(self, expr):
+        obj = self.evaluate(expr.object)
+        if not isinstance(obj, Instance):
+            raise RuntimeException(expr.name, "Only instances have fields.")
+        value = self.evaluate(expr.value)
+        obj.set(expr.name, value)
+        return value
 
     def visit_unary(self, expr):
         right = self.evaluate(expr.right)

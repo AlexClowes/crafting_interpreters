@@ -101,6 +101,9 @@ class Resolver:
     def visit_call(self, expr):
         self.resolve(expr.callee, *expr.arguments)
 
+    def visit_get(self, expr):
+        self.resolve(expr.object)
+
     def visit_grouping(self, expr):
         self.resolve(expr.expression)
 
@@ -109,6 +112,10 @@ class Resolver:
 
     def visit_logical(self, expr):
         self.resolve(expr.left, expr.right)
+
+    def visit_set(self, expr):
+        self.resolve(expr.value)
+        self.resolve(expr.object)
 
     def visit_unary(self, expr):
         self.resolve(expr.right)

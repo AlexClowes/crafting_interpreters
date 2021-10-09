@@ -45,9 +45,11 @@ def main():
             "Assign : name, value",
             "Binary : left, operator, right",
             "Call : callee, paren, arguments",
+            "Get : object, name",
             "Grouping : expression",
             "Literal : value",
             "Logical : left, operator, right",
+            "Set : object, name, value",
             "Unary : operator, right",
             "Variable : name"
         ],

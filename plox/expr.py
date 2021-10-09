@@ -31,6 +31,15 @@ class Call(Expr):
         return visitor.visit_call(self)
 
 
+class Get(Expr):
+    def __init__(self, object, name):
+        self.object = object
+        self.name = name
+
+    def accept(self, visitor):
+        return visitor.visit_get(self)
+
+
 class Grouping(Expr):
     def __init__(self, expression):
         self.expression = expression
@@ -55,6 +64,16 @@ class Logical(Expr):
 
     def accept(self, visitor):
         return visitor.visit_logical(self)
+
+
+class Set(Expr):
+    def __init__(self, object, name, value):
+        self.object = object
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor):
+        return visitor.visit_set(self)
 
 
 class Unary(Expr):
