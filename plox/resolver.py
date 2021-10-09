@@ -60,6 +60,7 @@ class Resolver:
         self.resolve(stmt.expression)
 
     def visit_function(self, stmt):
+        self.declare(stmt.name)
         self.define(stmt.name)
         self.resolve_function(stmt, FunctionType.FUNCTION)
 
