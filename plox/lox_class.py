@@ -32,7 +32,7 @@ class Instance:
         if name.lexeme in self.fields:
             return self.fields[name.lexeme]
         if method := self.class_.find_method(name.lexeme):
-            return method
+            return method.bind(self)
         raise interpreter.RuntimeException(name, f"Undefined property '{name.lexeme}'.")
 
     def set(self, name, value):

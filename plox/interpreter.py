@@ -181,6 +181,9 @@ class Interpreter:
         obj.set(expr.name, value)
         return value
 
+    def visit_this(self, expr):
+        return self.look_up_variable(expr.keyword, expr)
+
     def visit_unary(self, expr):
         right = self.evaluate(expr.right)
         op_type = expr.operator.type

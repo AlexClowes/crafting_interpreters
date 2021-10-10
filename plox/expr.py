@@ -76,6 +76,14 @@ class Set(Expr):
         return visitor.visit_set(self)
 
 
+class This(Expr):
+    def __init__(self, keyword):
+        self.keyword = keyword
+
+    def accept(self, visitor):
+        return visitor.visit_this(self)
+
+
 class Unary(Expr):
     def __init__(self, operator, right):
         self.operator = operator

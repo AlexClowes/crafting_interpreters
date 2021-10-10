@@ -6,11 +6,15 @@ from . import lox
 FunctionType = Enum("FunctionType", ["NONE", "FUNCTION", "METHOD"])
 
 
+ClassType = Enum("ClassType", ["NONE", "CLASS"])
+
+
 class Resolver:
     def __init__(self, interpreter):
         self.interpreter = interpreter
         self.scopes = []
         self.current_function = FunctionType.NONE
+        self.current_class = ClassType.NONE
 
     def resolve(self, *args):
         for arg in args:
@@ -57,11 +61,22 @@ class Resolver:
         self.end_scope()
 
     def visit_class(self, stmt):
+        enclosing_class = self.current_class
+        self.current_class = ClassType.CLASS
+
         self.declare(stmt.name)
         self.define(stmt.name)
+
+        self.begin_scope()
+        self.scopes[-1]["this"] = True
+
         for method in stmt.methods:
             declaration = FunctionType.METHOD
             self.resolve_function(method, declaration)
+
+        self.end_scope()
+
+        self.current_class = enclosing_class
 
     def visit_expression(self, stmt):
         self.resolve(stmt.expression)
@@ -119,6 +134,11 @@ class Resolver:
     def visit_set(self, expr):
         self.resolve(expr.value)
         self.resolve(expr.object)
+
+    def visit_this(self, expr):
+        if self.current_class is not ClassType.CLASS:
+            lox.error(expr.keyword, "Can't use 'this' outside of a class.")
+        self.resolve_local(expr, expr.keyword)
 
     def visit_unary(self, expr):
         self.resolve(expr.right)
