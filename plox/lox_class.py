@@ -23,7 +23,10 @@ class LoxClass(Callable):
         return instance
 
     def find_method(self, name):
-        return self.methods.get(name)
+        if name in self.methods:
+            return self.methods[name]
+        if self.superclass is not None:
+            return self.superclass.find_method(name)
 
 
 class Instance:
