@@ -46,7 +46,11 @@ class Interpreter:
 
     def visit_class(self, stmt):
         self.environment.define(stmt.name.lexeme, None)
-        self.environment.assign(stmt.name, LoxClass(stmt.name.lexeme))
+        methods = {
+            method.name.lexeme: Function(method, self.environment)
+            for method in stmt.methods
+        }
+        self.environment.assign(stmt.name, LoxClass(stmt.name.lexeme, methods))
 
     def visit_expression(self, stmt):
         self.evaluate(stmt.expression)

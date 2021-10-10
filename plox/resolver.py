@@ -3,7 +3,7 @@ from enum import Enum
 from . import lox
 
 
-FunctionType = Enum("FunctionType", ["NONE", "FUNCTION"])
+FunctionType = Enum("FunctionType", ["NONE", "FUNCTION", "METHOD"])
 
 
 class Resolver:
@@ -59,6 +59,9 @@ class Resolver:
     def visit_class(self, stmt):
         self.declare(stmt.name)
         self.define(stmt.name)
+        for method in stmt.methods:
+            declaration = FunctionType.METHOD
+            self.resolve_function(method, declaration)
 
     def visit_expression(self, stmt):
         self.resolve(stmt.expression)
