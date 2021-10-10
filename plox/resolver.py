@@ -3,7 +3,7 @@ from enum import Enum
 from . import lox
 
 
-FunctionType = Enum("FunctionType", ["NONE", "FUNCTION", "METHOD"])
+FunctionType = Enum("FunctionType", ["NONE", "FUNCTION", "INITIALIZER", "METHOD"])
 
 
 ClassType = Enum("ClassType", ["NONE", "CLASS"])
@@ -71,7 +71,10 @@ class Resolver:
         self.scopes[-1]["this"] = True
 
         for method in stmt.methods:
-            declaration = FunctionType.METHOD
+            if method.name.lexeme == "init":
+                declaration = FunctionType.INITIALIZER
+            else:
+                declaration = FunctionType.METHOD
             self.resolve_function(method, declaration)
 
         self.end_scope()
@@ -98,6 +101,8 @@ class Resolver:
         if self.current_function is FunctionType.NONE:
             lox.error(stmt.keyword, "Can't return from top-level code.")
         if stmt.value is not None:
+            if self.current_function is FunctionType.INITIALIZER:
+                lox.error(stmt.keyword, "Can't return a value from an initializer.")
             self.resolve(stmt.value)
 
     def visit_var(self, stmt):

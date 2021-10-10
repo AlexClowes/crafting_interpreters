@@ -21,9 +21,10 @@ class Callable(ABC):
 
 
 class Function(Callable):
-    def __init__(self, declaration, closure):
+    def __init__(self, declaration, closure, is_initializer):
         self.declaration = declaration
         self.closure = closure
+        self.is_initializer = is_initializer
 
     def arity(self):
         return len(self.declaration.params)
@@ -35,7 +36,12 @@ class Function(Callable):
         try:
             interpreter.execute_block(self.declaration.body, environment)
         except Return as ret:
+            if self.is_initializer:
+                return self.closure.get_at(0, "this")
             return ret.value
+
+        if self.is_initializer:
+            return self.closure.get_at(0, "this")
 
     def __str__(self):
         return f"<fn {self.declaration.name.lexeme}>"
@@ -43,7 +49,7 @@ class Function(Callable):
     def bind(self, instance):
         environment = Environment(self.closure)
         environment.define("this", instance)
-        return Function(self.declaration, environment)
+        return Function(self.declaration, environment, self.is_initializer)
 
 
 class Clock(Callable):
