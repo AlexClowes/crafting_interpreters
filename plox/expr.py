@@ -76,6 +76,15 @@ class Set(Expr):
         return visitor.visit_set(self)
 
 
+class Super(Expr):
+    def __init__(self, keyword, method):
+        self.keyword = keyword
+        self.method = method
+
+    def accept(self, visitor):
+        return visitor.visit_super(self)
+
+
 class This(Expr):
     def __init__(self, keyword):
         self.keyword = keyword
