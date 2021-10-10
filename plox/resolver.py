@@ -42,7 +42,9 @@ class Resolver:
         if self.scopes:
             scope = self.scopes[-1]
             if name.lexeme in scope:
-                lox.error(name, "Already a variable with this name in this scope.")
+                lox.parse_error(
+                    name, "Already a variable with this name in this scope."
+                )
             scope[name.lexeme] = False
 
     def define(self, name):
@@ -99,10 +101,12 @@ class Resolver:
 
     def visit_return(self, stmt):
         if self.current_function is FunctionType.NONE:
-            lox.error(stmt.keyword, "Can't return from top-level code.")
+            lox.parse_error(stmt.keyword, "Can't return from top-level code.")
         if stmt.value is not None:
             if self.current_function is FunctionType.INITIALIZER:
-                lox.error(stmt.keyword, "Can't return a value from an initializer.")
+                lox.parse_error(
+                    stmt.keyword, "Can't return a value from an initializer."
+                )
             self.resolve(stmt.value)
 
     def visit_var(self, stmt):
@@ -142,7 +146,7 @@ class Resolver:
 
     def visit_this(self, expr):
         if self.current_class is not ClassType.CLASS:
-            lox.error(expr.keyword, "Can't use 'this' outside of a class.")
+            lox.parse_error(expr.keyword, "Can't use 'this' outside of a class.")
         self.resolve_local(expr, expr.keyword)
 
     def visit_unary(self, expr):
@@ -150,5 +154,7 @@ class Resolver:
 
     def visit_variable(self, expr):
         if self.scopes and self.scopes[-1].get(expr.name.lexeme) is False:
-            lox.error("Can't read local variable in its own initializer.")
+            lox.parse_error(
+                expr.name, "Can't read local variable in its own initializer."
+            )
         self.resolve_local(expr, expr.name)
