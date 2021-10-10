@@ -45,6 +45,14 @@ class Interpreter:
         self.execute_block(stmt.statements, Environment(self.environment))
 
     def visit_class(self, stmt):
+        superclass = None
+        if stmt.superclass is not None:
+            superclass = self.evaluate(stmt.superclass)
+            if not isinstance(superclass, LoxClass):
+                raise RuntimeException(
+                    stmt.superclass.name, "Superclass must be a class."
+                )
+
         self.environment.define(stmt.name.lexeme, None)
         methods = {
             method.name.lexeme: Function(
@@ -52,7 +60,9 @@ class Interpreter:
             )
             for method in stmt.methods
         }
-        self.environment.assign(stmt.name, LoxClass(stmt.name.lexeme, methods))
+        self.environment.assign(
+            stmt.name, LoxClass(stmt.name.lexeme, superclass, methods)
+        )
 
     def visit_expression(self, stmt):
         self.evaluate(stmt.expression)
