@@ -1,8 +1,7 @@
-BUILDDIR=build/
+OBJECTS = chunk.o debug.o main.o memory.o
 
-main: main.c
-	mkdir -p $(BUILDDIR)
-	gcc main.c -o $(BUILDDIR)/lox
+lox: $(OBJECTS)
+	$(CC) $^ -o $@
 
 clean:
-	rm -rf $(BUILDDIR)
+	rm -rf *.o lox
