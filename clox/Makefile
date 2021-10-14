@@ -1,4 +1,5 @@
-OBJECTS = chunk.o debug.o main.o memory.o
+SOURCES = $(wildcard *.c)
+OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
 lox: $(OBJECTS)
 	$(CC) $^ -o $@
